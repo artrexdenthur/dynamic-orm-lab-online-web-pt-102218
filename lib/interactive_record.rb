@@ -2,10 +2,13 @@ require_relative "../config/environment.rb"
 require 'active_support/inflector'
 
 class InteractiveRecord
-  
-  def self.table_name
-    self.to_s.downcase.pluralize
-  end
+
+  def initialize(options={})
+    options.each do |k, v|
+      self.send("#{k}=", v)
+    end
+    self
+  end  
   
   def self.column_names
     DB[:conn].results_as_hash = true
@@ -15,11 +18,8 @@ class InteractiveRecord
     table_data.map { |col| col["name"] }
   end
   
-  def initialize(options={})
-    options.each do |k, v|
-      self.send("#{k}=", v)
-    end
-    self
+  def self.table_name
+    self.to_s.downcase.pluralize
   end
   
   def table_name_for_insert
